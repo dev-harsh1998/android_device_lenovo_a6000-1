@@ -8,15 +8,11 @@ PRODUCT_PACKAGES += \
     libOmxQcelp13Enc \
     libOmxVdec \
     libOmxVenc \
-    libstagefrighthw
-
-ifneq ($(QCPATH),)
-PRODUCT_PACKAGES += \
+    libstagefrighthw \
     libOmxVdecHevc
-endif
 
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/media_codecs_msm8916.xml:system/etc/media_codecs.xml
+    $(LOCAL_PATH)/configs/media_codecs_msm8916.xml:system/vendor/etc/media_codecs.xml
 
 # Properties
 PRODUCT_PROPERTY_OVERRIDES += \
