@@ -61,7 +61,7 @@ LOCAL_SRC_FILES := qsap_api.c \
 
 LOCAL_PRELINK_MODULE := false
 
-LOCAL_SHARED_LIBRARIES := libnetutils libutils libbinder libcutils
+LOCAL_SHARED_LIBRARIES := libnetutils libutils libbinder libcutils liblog
 
 include $(BUILD_SHARED_LIBRARY)
 

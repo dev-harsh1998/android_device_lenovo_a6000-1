@@ -10,6 +10,7 @@ sourceFiles := \
 commonSharedLibraries := \
                         libcutils \
                         libutils \
+			liblog \
                         libdl \
                         libhardware
 commonIncludes := \

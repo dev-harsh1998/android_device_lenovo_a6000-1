@@ -28,52 +28,69 @@
  */
 
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fstream>
 #include <string.h>
 #include <unistd.h>
-#include <sys/system_properties.h>
 #include "init_msm8916.h"
 #include "property_service.h"
 #include <sys/sysinfo.h>
-//#include "vendor_init.h"
+
 #include "log.h"
 #include "util.h"
 
-#include <android-base/file.h>
 #include <android-base/properties.h>
-#include <android-base/strings.h>
+#include <android-base/logging.h>
 
-using android::base::GetProperty;
-using android::base::ReadFileToString;
-using android::init::property_set;
-using android::base::Trim;
-using android::init::property_set;
+namespace android {
+namespace init {
 
  #define MAX(a, b) (((a) > (b)) ? (a) : (b))
  
  #define ALPHABET_LEN 256
  #define KB 1024
-// #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
+ 
  #define IMG_PART_PATH "/dev/block/bootdevice/by-name/modem"
  #define IMG_VER_STR "QC_IMAGE_VERSION_STRING="
  #define IMG_VER_STR_LEN 24
  #define IMG_VER_BUF_LEN 255
  #define IMG_SZ 32000 * KB    /* MMAP 32000K of modem, modem partition is 64000K */
 
+static int read_file2(const char *fname, char *data, int max_size)
+{
+    int fd, rc;
+
+    if (max_size < 1)
+        return 0;
+
+    fd = open(fname, O_RDONLY);
+    if (fd < 0) {
+        //LOG(ERROR)("failed to open '%s'\n", fname);
+        return 0;
+    }
+
+    rc = read(fd, data, max_size - 1);
+    if ((rc > 0) && (rc < max_size))
+        data[rc] = '\0';
+    else
+        data[0] = '\0';
+    close(fd);
+
+    return 1;
+}
+
 static void init_alarm_boot_properties()
 {
-    char const *boot_reason_file = "/proc/sys/kernel/boot_reason";
-    char const *power_off_alarm_file = "/persist/alarm/powerOffAlarmSet";
-    std::string boot_reason;
-    std::string power_off_alarm;
-    std::string tmp = GetProperty("ro.boot.alarmboot","");
+    char const *alarm_file = "/proc/sys/kernel/boot_reason";
+    char buf[64];
+    std::string tmp = android::base::GetProperty("ro.boot.alarmboot","");
 
-    if (ReadFileToString(boot_reason_file, &boot_reason)
-            && ReadFileToString(power_off_alarm_file, &power_off_alarm)) {
+    if (read_file2(alarm_file, buf, sizeof(buf))) {
         /*
          * Setup ro.alarm_boot value to true when it is RTC triggered boot up
          * For existing PMIC chips, the following mapping applies
@@ -89,14 +106,12 @@ static void init_alarm_boot_properties()
          * 7 -> CBLPWR_N pin toggled (for external power supply)
          * 8 -> KPDPWR_N pin toggled (power key pressed)
          */
-        if ((Trim(boot_reason) == "3" || tmp == "true")
-                && Trim(power_off_alarm) == "1")
+        if (buf[0] == '3' || tmp == "true")
             property_set("ro.alarm_boot", "true");
         else
             property_set("ro.alarm_boot", "false");
     }
 }
-
 /* Boyer-Moore string search implementation from Wikipedia */
  
  /* Return longest suffix length of suffix ending at str[p] */
@@ -222,11 +237,12 @@ void init_target_properties()
     rc = get_img_version(modem_version, IMG_VER_BUF_LEN);
     if (!rc) {
         property_set("gsm.version.baseband", modem_version);
+       // ERROR("Detected modem version=%s\n", modem_version);
 }
 
     /*A6000 Plus*/
     if (is2GB()) {
-    property_set("dalvik.vm.heapgrowthlimit", "192m");
+	property_set("dalvik.vm.heapgrowthlimit", "192m");
     }
     /*A6000*/
     else {
@@ -235,7 +251,7 @@ void init_target_properties()
 	property_set("ro.lmk.critical_upgrade", "true");
     property_set("ro.lmk.upgrade_pressure", "40");
 	property_set("pm.dexopt.downgrade_after_inactive_days", "10");
-	property_set("pm.dexopt.shared", "quicken");
+    property_set("pm.dexopt.shared", "quicken");
     }
 
 }
@@ -243,4 +259,7 @@ void vendor_load_properties()
 {
     init_target_properties();
     init_alarm_boot_properties();
+}
+
+}
 }
