@@ -2,13 +2,10 @@
 PRODUCT_PACKAGES += \
     android.hardware.camera.provider@2.4-impl \
     camera.device@1.0-impl \
+    libshim_atomic \
     camera.msm8916 \
     libmm-qcamera \
     SnapdragonCamera
-
-# Build libstlport for vendor blobs
-PRODUCT_PACKAGES += \
-    libstlport
 
 # Permissions
 PRODUCT_COPY_FILES += \

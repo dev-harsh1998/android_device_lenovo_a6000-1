@@ -1,6 +1,8 @@
 # GPS
 PRODUCT_PACKAGES += \
     gps.msm8916 \
+    libshims_flp \
+    libshims_get_process_name \
     android.hardware.gnss@1.0-impl
 
 PRODUCT_COPY_FILES += \
