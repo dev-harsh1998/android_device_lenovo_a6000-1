@@ -5,7 +5,7 @@ PRODUCT_PACKAGES += \
     libshim_atomic \
     camera.msm8916 \
     libmm-qcamera \
-    SnapdragonCamera
+    SnapdragonCamera2
 
 # Permissions
 PRODUCT_COPY_FILES += \
