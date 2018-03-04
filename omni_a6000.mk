@@ -19,7 +19,8 @@ $(call inherit-product, vendor/omni/config/common.mk)
 $(call inherit-product, vendor/omni/config/gsm.mk)
 
 # must be before including omni part
-TARGET_BOOTANIMATION_SIZE := 640x362
+TARGET_BOOTANIMATION_SIZE := 720p
+TARGET_BOOTANIMATION_HALF_RES := true
 
 # Must define platform variant before including any common things
 TARGET_BOARD_PLATFORM_VARIANT := msm8916

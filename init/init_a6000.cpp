@@ -35,11 +35,11 @@
 #include <fstream>
 #include <string.h>
 #include <unistd.h>
-#include <sys/_system_properties.h>
+#include <sys/system_properties.h>
 #include "init_msm8916.h"
 #include "property_service.h"
 #include <sys/sysinfo.h>
-#include "vendor_init.h"
+//#include "vendor_init.h"
 #include "log.h"
 #include "util.h"
 
@@ -57,7 +57,7 @@ using android::init::property_set;
  
  #define ALPHABET_LEN 256
  #define KB 1024
- #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
+// #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
  #define IMG_PART_PATH "/dev/block/bootdevice/by-name/modem"
  #define IMG_VER_STR "QC_IMAGE_VERSION_STRING="
  #define IMG_VER_STR_LEN 24
